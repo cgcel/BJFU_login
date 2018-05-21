@@ -1,7 +1,10 @@
-#Author:ElvinChan<ElvinChan0644@outlook.com>
-#Date:2018.3.17
+# -*- coding: utf-8 -*-
+# Author: ElvinChan<ElvinChan0644@outlook.com>
+
 import requests
 from bs4 import BeautifulSoup
+from neu6_login import neu6
+import time
 url1 = 'http://202.204.122.1/checkLogin.jsp'
 #check your own ip and ueser id on your computer, and fill into url2 and url3 above
 url2 = 'http://202.204.122.1/user/index.jsp?ip=118.228.167.204&action=connect'
@@ -34,30 +37,43 @@ class BJFULOGIN(object):
             'ip': '',
             'action': 'admin'
         }
-        self.session.post(url1, data=postdata)
-        #print(response1.text)
+        try:
+            self.session.post(url1, data=postdata)
+            #print(response1.text)
+        except:
+            print("login failed.")
 
-    def connect(self):  
-        self.session.get(url3)
-        #print(response3.text)
-        #print(response3.status_code)
+    def connect(self):
+        try:
+            self.session.get(url3)
+            #print(response3.text)
+            #print(response3.status_code)
+        except:
+            print("connect failed.")
 
     def info(self):
-        soup = BeautifulSoup(self.session.get(url3).content, "html.parser")
-        information = soup.find_all("td", {"class": "left_bt2"})
-        info_m = soup.find_all("td", {"class": "form_td_middle"})
-        print(information[0].text.strip())
-        print("用户类型：", info_m[0].text.strip())
-        print("账户余额：", info_m[2].text.strip())
-        print("剩余免费流量：", info_m[6].text.strip())
-        print("剩余基础流量：", info_m[10].text.strip())
+        try:
+            soup = BeautifulSoup(self.session.get(url3).content, "html.parser")
+            information = soup.find_all("td", {"class": "left_bt2"})
+            info_m = soup.find_all("td", {"class": "form_td_middle"})
+            print(information[0].text.strip())
+            print("用户类型：", info_m[0].text.strip())
+            print("账户余额：", info_m[2].text.strip())
+            print("剩余免费流量：", info_m[6].text.strip())
+            print("剩余基础流量：", info_m[10].text.strip())
+        except:
+            print("获取信息失败")
 
 
 def main():
     bjfu = BJFULOGIN()
     bjfu.login()
     bjfu.connect()
+    time.sleep(1)
     bjfu.info()
+    print("六维空间:")
+    neu = neu6()  # 初始化
+    neu.login()
 
 
 if __name__ == "__main__":
