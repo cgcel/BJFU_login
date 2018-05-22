@@ -3,16 +3,15 @@
 
 import requests
 from bs4 import BeautifulSoup
-from neu6_login import neu6
 import time
+url = 'http://202.204.122.1/index.jsp'
 url1 = 'http://202.204.122.1/checkLogin.jsp'
-#check your own ip and ueser id on your computer, and fill into url2 and url3 above
-url2 = 'http://202.204.122.1/user/index.jsp?ip=118.228.167.204&action=connect'
-url3 = 'http://202.204.122.1/user/network/connect_action.jsp?userid=104374&ip=118.228.167.204&type=2'
+url2 = 'http://202.204.122.1/user/index.jsp?ip='
+url3 = 'http://202.204.122.1/user/network/connect_action.jsp?userid='
 
 
 class BJFULOGIN(object):
-    def __init__(self):
+    def __init__(self, username, password):
         headers = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
             'Accept-Encoding': 'gzip, deflate',
@@ -30,30 +29,47 @@ class BJFULOGIN(object):
         self.session = requests.Session()
         self.session.headers.update(headers)
 
+        # get ip
+        s = BeautifulSoup(self.session.get(url).content, 'html.parser')
+        self.ip = s.find("input", {"name": "ip"})["value"]
+        self.url2 = url2+self.ip+'&action=connect'
+
+        self.username = username
+        self.password = password
+
     def login(self):
         postdata = {
-            'username': '',
-            'password': '',
-            'ip': '',
+            'username': self.username,
+            'password': self.password,
+            'ip': self.ip,
             'action': 'admin'
         }
         try:
             self.session.post(url1, data=postdata)
-            #print(response1.text)
+            # print(response1.text)
         except:
             print("login failed.")
 
     def connect(self):
         try:
-            self.session.get(url3)
-            #print(response3.text)
-            #print(response3.status_code)
+            # get userid
+            userid = ''
+            r = self.session.get(self.url2)
+            idinfo = r.text.find("userid=")
+            for i in range(7, 13):
+                userid = userid+r.text[int(idinfo)+i]
+            self.userid = userid
+            # print(self.userid)
+
+            self.url3 = url3+self.userid+'&ip='+self.ip+'&type=2'
+            self.session.get(self.url3)
         except:
             print("connect failed.")
 
     def info(self):
         try:
-            soup = BeautifulSoup(self.session.get(url3).content, "html.parser")
+            soup = BeautifulSoup(self.session.get(
+                self.url3).content, "html.parser")
             information = soup.find_all("td", {"class": "left_bt2"})
             info_m = soup.find_all("td", {"class": "form_td_middle"})
             print(information[0].text.strip())
@@ -66,14 +82,11 @@ class BJFULOGIN(object):
 
 
 def main():
-    bjfu = BJFULOGIN()
+    bjfu = BJFULOGIN('username', 'password')
     bjfu.login()
     bjfu.connect()
     time.sleep(1)
     bjfu.info()
-    print("六维空间:")
-    neu = neu6()  # 初始化
-    neu.login()
 
 
 if __name__ == "__main__":
