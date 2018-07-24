@@ -2,8 +2,9 @@
 # Author: ElvinChan<ElvinChan0644@outlook.com>
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup as bs
 import time
+
 url = 'http://202.204.122.1/index.jsp'
 url1 = 'http://202.204.122.1/checkLogin.jsp'
 url2 = 'http://202.204.122.1/user/index.jsp?ip='
@@ -30,7 +31,7 @@ class BJFULOGIN(object):
         self.session.headers.update(headers)
 
         # get ip
-        s = BeautifulSoup(self.session.get(url).content, 'html.parser')
+        s = bs(self.session.get(url).content, 'html.parser')
         self.ip = s.find("input", {"name": "ip"})["value"]
         self.url2 = url2+self.ip+'&action=connect'
 
@@ -50,6 +51,9 @@ class BJFULOGIN(object):
         except:
             print("login failed.")
 
+    def disconnect(self):
+        self.session.get(url4+self.userid+'&ip='+self.ip+'&type=2')
+
     def connect(self):
         try:
             # get userid
@@ -68,7 +72,7 @@ class BJFULOGIN(object):
 
     def info(self):
         try:
-            soup = BeautifulSoup(self.session.get(
+            soup = bs(self.session.get(
                 self.url3).content, "html.parser")
             information = soup.find_all("td", {"class": "left_bt2"})
             info_m = soup.find_all("td", {"class": "form_td_middle"})
