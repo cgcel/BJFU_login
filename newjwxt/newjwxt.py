@@ -52,17 +52,13 @@ class newjwxt(object):
         Myclasses = []
         name = 'D:/Download/Myclasses.txt'
         r = self.session.get(url_classes)
-        # print(r.text)
         soup = bs(r.content, "html.parser")
-        # print(soup.prettify())
         classes = soup.find_all("div", {"class": "kbcontent"})
         classes_1 = soup.find_all("div", {"class": "kbcontent1"})
         print("Saving your classes...")
         for i in range(0, len(classes)):
-            # print(classes[i].text.strip())
             Myclasses.append(classes[i].text.strip())
             for i in range(0, len(classes_1)):
-                # print(classes_1[i].text.strip())
                 Myclasses.append(classes_1[i].text.strip())
         f = codecs.open(name, 'w')
         for i in Myclasses:

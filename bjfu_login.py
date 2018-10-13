@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Author: ElvinChan<ElvinChan0644@outlook.com>
+# author: Chan
 
 import requests
 from bs4 import BeautifulSoup as bs
@@ -47,7 +47,6 @@ class BJFULOGIN(object):
         }
         try:
             self.session.post(url1, data=postdata)
-            # print(response1.text)
         except:
             print("login failed.")
 
@@ -63,8 +62,8 @@ class BJFULOGIN(object):
             for i in range(7, 13):
                 userid = userid+r.text[int(idinfo)+i]
             self.userid = userid
-            # print(self.userid)
 
+            # build the url
             self.url3 = url3+self.userid+'&ip='+self.ip+'&type=2'
             self.session.get(self.url3)
         except:
