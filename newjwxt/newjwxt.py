@@ -39,10 +39,13 @@ class newjwxt(object):
         self.session.post(url_login, data=postdata)
         if(self.session.get(url_main).status_code == 200):
             print("登录成功")
+        else:
+            print("登录失败, 请重试")
+            return
+        return self.session
 
     def info(self):
         r = self.session.get(url_main)
-        # print(r.text)
         soup = bs(r.content, "html.parser")
         basic_info = soup.find_all("div", {"class": "Nsb_top_menu_nc"})
         info = basic_info[0].text.strip()
