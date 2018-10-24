@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# author: Chan
+# author: elvin
 
 import requests
 from bs4 import BeautifulSoup as bs
-import time
+import sys
+# import time
 
 url = 'http://202.204.122.1/index.jsp'
 url1 = 'http://202.204.122.1/checkLogin.jsp'
@@ -12,7 +13,7 @@ url3 = 'http://202.204.122.1/user/network/connect_action.jsp?userid='
 
 
 class BJFULOGIN(object):
-    def __init__(self, username, password):
+    def __init__(self, *args):
         headers = {
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
             'Accept-Encoding': 'gzip, deflate',
@@ -35,8 +36,12 @@ class BJFULOGIN(object):
         self.ip = s.find("input", {"name": "ip"})["value"]
         self.url2 = url2+self.ip+'&action=connect'
 
-        self.username = username
-        self.password = password
+        if len(sys.argv)>1:
+            self.username = sys.argv[1]
+            self.password = sys.argv[2]
+        else:
+            self.username = args[0]
+            self.password = args[1]
 
     def login(self):
         postdata = {
@@ -85,10 +90,10 @@ class BJFULOGIN(object):
 
 
 def main():
-    bjfu = BJFULOGIN('username', 'password')
+    bjfu = BJFULOGIN() #filled with username, password
     bjfu.login()
     bjfu.connect()
-    time.sleep(1)
+    # time.sleep(1)
     bjfu.info()
 
 
